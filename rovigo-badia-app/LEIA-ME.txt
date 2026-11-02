@@ -1,0 +1,57 @@
+APP ROVIGO E BADIA POLESINE COM AVISO DE SAÍDA
+
+Pastas:
+  app/       - o app (suba estes arquivos no GitHub Pages ou num Static Site do Render)
+  servidor/  - worker.js, o servidor que manda o aviso com o app fechado (Cloudflare)
+
+
+PARTE 1: CRIAR O SERVIDOR DE AVISOS (uma vez só, grátis)
+
+1. Crie uma conta em https://dash.cloudflare.com (plano Free).
+
+2. Crie o banco de dados:
+   Storage & Databases > D1 SQL Database > Create
+   Nome: avisos  > Create
+
+3. Crie o Worker:
+   Compute (Workers) > Workers & Pages > Create > Start with Hello World
+   Nome: rovigo-badia-aviso  > Deploy
+   Depois clique em "Edit code", apague tudo, cole o conteúdo de servidor/worker.js
+   Na linha CONTATO, troque "seu-email@exemplo.com" pelo seu e-mail.
+   Clique em Deploy.
+
+4. Ligue o banco ao Worker:
+   No Worker: Settings > Bindings > Add > D1 database
+   Variable name: DB   (exatamente assim, em maiúsculas)
+   Database: avisos  > Save
+
+5. Ligue o relógio que dispara os avisos:
+   No Worker: Settings > Trigger events (ou Triggers) > Add > Cron Triggers
+   Escolha "Every minute" ou digite:  * * * * *   > Add
+
+6. Teste: abra o endereço do Worker (algo como
+   https://rovigo-badia-aviso.SEUNOME.workers.dev). Deve aparecer
+   "Avisos Rovigo Badia: funcionando."
+
+
+PARTE 2: LIGAR O APP AO SERVIDOR
+
+7. Abra app/index.html num editor e procure a linha:
+     const AVISOS_URL="";
+   Coloque o endereço do Worker entre as aspas, sem barra no final:
+     const AVISOS_URL="https://rovigo-badia-aviso.SEUNOME.workers.dev";
+
+8. Suba os arquivos da pasta app/ no GitHub Pages (ou Static Site no Render).
+
+
+PARTE 3: NO IPHONE (iOS 16.4 ou mais novo)
+
+9. Abra o site no Safari > Compartilhar > Adicionar à Tela de Início.
+10. Abra o app pelo ÍCONE (não pelo Safari).
+11. Toque no sino de uma viagem e permita as notificações quando o iPhone perguntar.
+    Pronto: 10 min antes da saída chega a notificação, mesmo com o app fechado.
+
+Observações
+- O aviso pode chegar até 1 minuto depois do horário exato.
+- Se as notificações não chegarem, confira em Ajustes > Notificações > Rovigo Badia.
+- Desmarcar o sino cancela o aviso no servidor também.
